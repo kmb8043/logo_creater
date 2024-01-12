@@ -3,7 +3,6 @@ const fs = require('fs');
 const inquirer = require('inquirer');
 const { triangle, square, circle } = require('./lib/shapes');
 
-function userPrompts(){
     inquirer
         .prompt([
             {
@@ -14,7 +13,7 @@ function userPrompts(){
 
             {
                 type:'input',
-                message: 'Pick text color eiher by color name or by the hexadecimal',
+                message: 'Pick text color for the text',
                 name: 'textColor',
             },
 
@@ -22,24 +21,29 @@ function userPrompts(){
                 type: 'list',
                 message: 'Pick a shape',
                 name: 'shape',
+                choices: ['triangle' , 'square' , 'cirlce'],
             },
 
             {
                 type: 'input',
-                message: 'Choose a color for the shape background (color name or hexadecimal',
+                message: 'Choose a background color for your shape',
                 name: 'shapeColor',
             }
         ])
 
-    // if the 'text' is greater than 3 characters //
-        .then((answers) => {
-            if(answers.text.length > 3 ){
-                console.log("Text must be three characters or less. Try again.");
-                userPrompts();
-            } else{
-                writeToFile('logo.svg', answers);
+        .then((data) => {
+            const { text, textColor, shape, shapeColor} = data;
+            var svglogo;
+            switch (shape){
+                case 'triangle':
+                    svglogo = new triangle(text, textColor, shapeColor);
+                    break;
+                case 'square':
+                    svglogo = new square(text, textColor, shapeColor);
+                    break;
+                case 'circle':
+                    svglogo = new circle(text, textColor, shapeColor);
             }
-        })
-}
-
-userPrompts();
+// created file goes into the examples folder //
+    fs.writeFileSync('./examples/logo.svg' , svglogo.render());
+        });
